@@ -174,22 +174,23 @@ app.get("/api/submissions", async (req, res) => {
   try {
     const { search, sort, order } = req.query;
 
-    let query= {};
+    let query = {};
     if (search) query.team_id = { $regex: String(search), $options: "i" };
 
     let submissions = await Submission.find(query).lean();
 
     if (sort && order) {
       const dir = order === "asc" ? 1 : -1;
-      submissions = submissions.sort((a, b) => (a[sort as string] > b[sort as string] ? dir : -dir));
+      submissions = submissions.sort((a, b) => (a[sort] > b[sort] ? dir : -dir));
     }
 
     res.json(submissions);
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // PATCH mark submission as presented
 app.patch("/api/submissions/:id/presented", async (req, res) => {
