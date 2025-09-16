@@ -89,6 +89,7 @@ function hashPassword(password) {
   const derived = crypto.scryptSync(password, salt, 64);
   return `${salt.toString("hex")}:${derived.toString("hex")}`;
 }
+
 function verifyPassword(password, stored) {
   if (!stored) return false;
   const [saltHex, hashHex] = String(stored).split(":");
@@ -108,7 +109,7 @@ app.get("/api/health", (req, res) => res.json({ ok: true }));
 // Submit a team
 app.post("/api/submit", async (req, res) => {
   try {
-    const submissionSchema = z.object({
+    const schema = z.object({
       team_id: z.string(),
       team_name: z.string(),
       leader_name: z.string(),
@@ -118,7 +119,7 @@ app.post("/api/submit", async (req, res) => {
       slides_link: z.string().url(),
     });
 
-    const parsed = submissionSchema.parse(req.body);
+    const parsed = schema.parse(req.body);
 
     // Upsert team
     await Team.updateOne(
@@ -172,16 +173,22 @@ app.post("/api/jury/login", async (req, res) => {
 // GET all submissions
 app.get("/api/submissions", async (req, res) => {
   try {
-    const { search, sort, order } = req.query;
+    const search = req.query.search;
+    const sort = req.query.sort;
+    const order = req.query.order;
 
     let query = {};
-    if (search) query.team_id = { $regex: String(search), $options: "i" };
+    if (search) {
+      query.team_id = { $regex: String(search), $options: "i" };
+    }
 
     let submissions = await Submission.find(query).lean();
 
     if (sort && order) {
       const dir = order === "asc" ? 1 : -1;
-      submissions = submissions.sort((a, b) => (a[sort] > b[sort] ? dir : -dir));
+      submissions = submissions.sort((a, b) =>
+        a[sort] > b[sort] ? dir : -dir
+      );
     }
 
     res.json(submissions);
@@ -191,14 +198,17 @@ app.get("/api/submissions", async (req, res) => {
   }
 });
 
-
 // PATCH mark submission as presented
 app.patch("/api/submissions/:id/presented", async (req, res) => {
   try {
-    const { id } = req.params;
-    const submission = await Submission.findByIdAndUpdate(id, { presented: true }, { new: true });
+    const id = req.params.id;
+    const submission = await Submission.findByIdAndUpdate(
+      id,
+      { presented: true },
+      { new: true }
+    );
     res.json(submission);
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
@@ -207,10 +217,10 @@ app.patch("/api/submissions/:id/presented", async (req, res) => {
 // DELETE a submission
 app.delete("/api/submissions/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     await Submission.findByIdAndDelete(id);
     res.json({ success: true });
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
