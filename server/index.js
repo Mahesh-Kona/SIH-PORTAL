@@ -174,7 +174,7 @@ app.get("/api/submissions", async (req, res) => {
   try {
     const { search, sort, order } = req.query;
 
-    let query: any = {};
+    let query= {};
     if (search) query.team_id = { $regex: String(search), $options: "i" };
 
     let submissions = await Submission.find(query).lean();
