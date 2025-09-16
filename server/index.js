@@ -105,7 +105,7 @@ function verifyPassword(password, stored) {
 // Health check
 app.get("/api/health", (req, res) => res.json({ ok: true }));
 
-// Example: submit a team
+// Submit a team
 app.post("/api/submit", async (req, res) => {
   try {
     const submissionSchema = z.object({
@@ -141,14 +141,14 @@ app.post("/api/submit", async (req, res) => {
     }
 
     const numericId = Number(parsed.problem_code.slice(3)) || 0;
-    await Submission.create({
+    const submission = await Submission.create({
       team_id: parsed.team_id,
       problem_id: numericId,
       problem_code: parsed.problem_code,
       slides_link: parsed.slides_link,
     });
 
-    res.json({ success: true });
+    res.json(submission);
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: err.message });
@@ -167,6 +167,52 @@ app.post("/api/jury/login", async (req, res) => {
     name: jury.name,
     department: jury.department,
   });
+});
+
+// GET all submissions
+app.get("/api/submissions", async (req, res) => {
+  try {
+    const { search, sort, order } = req.query;
+
+    let query: any = {};
+    if (search) query.team_id = { $regex: String(search), $options: "i" };
+
+    let submissions = await Submission.find(query).lean();
+
+    if (sort && order) {
+      const dir = order === "asc" ? 1 : -1;
+      submissions = submissions.sort((a, b) => (a[sort as string] > b[sort as string] ? dir : -dir));
+    }
+
+    res.json(submissions);
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH mark submission as presented
+app.patch("/api/submissions/:id/presented", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const submission = await Submission.findByIdAndUpdate(id, { presented: true }, { new: true });
+    res.json(submission);
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE a submission
+app.delete("/api/submissions/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Submission.findByIdAndDelete(id);
+    res.json({ success: true });
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // =======================
