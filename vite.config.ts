@@ -14,21 +14,22 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:4000',
         changeOrigin: true,
-        secure: false
-      }
-    }
+        secure: false,
+      },
+    },
   },
   preview: {
     host: '0.0.0.0',
-    port: 4173
+    port: 4173,
+    allowedHosts: ['sih-portal-frontend.onrender.com'], // ✅ add this line
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: undefined
-      }
-    }
-  }
+        manualChunks: undefined,
+      },
+    },
+  },
 });
