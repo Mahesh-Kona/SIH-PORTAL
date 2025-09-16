@@ -1,38 +1,25 @@
 {
-  "name": "vite-react-typescript-starter",
-  "private": true,
+  "name": "sih-portal-frontend",
   "version": "0.0.0",
-  "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"vite\"",
-    "server": "node server/index.js",
-    "dev:all": "concurrently \"npm run server\" \"vite\"",
+    "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0 --port $PORT",
-    "start": "node server-frontend.js",
-    "lint": "eslint ."
+    "preview": "vite preview"
   },
   "dependencies": {
-  "tailwindcss": "^3.4.1",
-  "postcss": "^8.4.35",
-  "autoprefixer": "^10.4.18",
-  "react": "^18.3.1",
-  "react-dom": "^18.3.1",
-  "react-router-dom": "^7.8.2",
-  "lucide-react": "^0.344.0"
-},
-"devDependencies": {
-  "@vitejs/plugin-react": "^4.3.1",
-  "typescript": "^5.5.3",
-  "vite": "^7.1.5",
-  "eslint": "^9.9.1",
-  "eslint-plugin-react-hooks": "^5.1.0-rc.0",
-  "eslint-plugin-react-refresh": "^0.4.11",
-  "concurrently": "^8.2.2",
-  "@types/react": "^18.3.5",
-  "@types/react-dom": "^18.3.0",
-  "@eslint/js": "^9.9.1",
-  "globals": "^15.9.0",
-  "typescript-eslint": "^8.3.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.424.0",
+    "tailwindcss": "^3.4.13",
+    "postcss": "^8.4.47",
+    "autoprefixer": "^10.4.20"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1",
+    "eslint": "^8.3.0"
+  }
 }
-
