@@ -1,0 +1,38 @@
+services:
+  # Backend API Service
+  - type: web
+    name: sih-backend
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index-simple.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@rgukt.ac.in
+      - key: ADMIN_PASSWORD
+        value: SIH2024@Admin
+
+  # Frontend Web Service (Node.js server serving built files)
+  - type: web
+    name: sih-frontend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: VITE_API_BASE
+        value: /api
+      - key: BACKEND_URL
+        value: https://sih-backend.onrender.com
+
+# SQLite will be used instead of PostgreSQL for simplicity
