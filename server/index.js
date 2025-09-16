@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const DEFAULT_PORT = Number(process.env.PORT) || 4000;
+const PORT = process.env.PORT || 4000;
 
 // ✅ Middleware
 app.use(cors());
@@ -172,6 +172,6 @@ app.post("/api/jury/login", async (req, res) => {
 // =======================
 // SERVER START
 // =======================
-app.listen(DEFAULT_PORT, () =>
-  console.log(`🚀 API running on http://localhost:${DEFAULT_PORT}`)
-);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 API running on http://0.0.0.0:${PORT}`);
+});
